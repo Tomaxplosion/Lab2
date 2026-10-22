@@ -23,6 +23,14 @@ test('protección, validación, formulario, persistencia y sesión',async({page,
  await expect(page.getByRole('status')).toContainText('Riesgo guardado');
  await page.reload();await expect(page.getByRole('heading',{name:examples[0].event,exact:true}).first()).toBeVisible();
  const api=page.context().request;
+ const before=await (await api.get('/api/risks')).json();
+ expect((await request.post('/api/risks',{data:examples[0]})).status()).toBe(401);
+ expect((await request.put('/api/risks',{data:{...examples[0],id:before[0].id}})).status()).toBe(401);
+ expect((await request.delete('/api/risks',{data:{id:before[0].id}})).status()).toBe(401);
+ expect(await (await api.get('/api/risks')).json()).toEqual(before);
+ expect(before[0].score).toBe(6);expect(before[0].level).toBe('Alto');expect(before[0].updatedAt).toBeTruthy();
+ expect((await api.post('/api/risks',{data:{...examples[0],score:1},headers:{Origin:'http://127.0.0.1:3100'}})).status()).toBe(400);
+ for(const p of [1,2,3])for(const i of [1,2,3]){const r=await api.post('/api/evaluation',{data:{probability:p,impact:i},headers:{Origin:'http://127.0.0.1:3100'}});expect((await r.json()).score).toBe(p*i);}
  expect((await api.post('/api/risks',{data:{...examples[0],impact:99},headers:{Origin:'http://127.0.0.1:3100'}})).status()).toBe(400);
  expect((await api.post('/api/risks',{data:examples[0],headers:{Origin:'https://ajeno.invalid'}})).status()).toBe(403);
  expect((await api.post('/api/risks',{data:'{',headers:{Origin:'http://127.0.0.1:3100','Content-Type':'application/json'}})).status()).toBe(400);
@@ -42,6 +50,8 @@ test('protección, validación, formulario, persistencia y sesión',async({page,
  // Los textos del usuario son texto plano y no crean elementos HTML.
  const xss=await api.post('/api/risks',{data:{...examples[0],event:'<img src=x onerror=alert(1)>'},headers:{Origin:'http://127.0.0.1:3100'}});expect(xss.status()).toBe(201);
  await page.reload();await expect(page.getByRole('heading',{name:'<img src=x onerror=alert(1)>',exact:true})).toBeVisible();await expect(page.locator('article img')).toHaveCount(0);
+ const html=await page.content();expect(html).not.toContain(process.env.TEST_PASSWORD!);
+ for(const src of await page.locator('script[src]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('src')!))){const js=await (await api.get(src)).text();expect(js).not.toContain(process.env.TEST_PASSWORD!);expect(js).not.toMatch(/postgres(?:ql)?:\/\/[^\s]+:[^\s]+@/);}
  await page.getByRole('button',{name:'Cerrar sesión'}).click();
  await expect(page.getByLabel('Contraseña de acceso')).toBeVisible();
  expect((await api.get('/api/risks')).status()).toBe(401);
