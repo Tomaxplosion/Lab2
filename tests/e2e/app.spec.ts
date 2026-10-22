@@ -51,7 +51,7 @@ test('protección, validación, formulario, persistencia y sesión',async({page,
  const xss=await api.post('/api/risks',{data:{...examples[0],event:'<img src=x onerror=alert(1)>'},headers:{Origin:'http://127.0.0.1:3100'}});expect(xss.status()).toBe(201);
  await page.reload();await expect(page.getByRole('heading',{name:'<img src=x onerror=alert(1)>',exact:true})).toBeVisible();await expect(page.locator('article img')).toHaveCount(0);
  const html=await page.content();expect(html).not.toContain(process.env.TEST_PASSWORD!);
- for(const src of await page.locator('script[src]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('src')!))){const js=await (await api.get(src)).text();expect(js).not.toContain(process.env.TEST_PASSWORD!);expect(js).not.toMatch(/postgres(?:ql)?:\/\/[^\s]+:[^\s]+@/);}
+ for(const src of await page.locator('script[src]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('src')!))){const js=await (await api.get(src)).text();for(const secret of [process.env.TEST_PASSWORD!,process.env.TEST_SESSION_SECRET!,process.env.TEST_SERVER_HASH!])expect(js).not.toContain(secret);expect(js).not.toMatch(/postgres(?:ql)?:\/\/[^\s]+:[^\s]+@/);}
  await page.getByRole('button',{name:'Cerrar sesión'}).click();
  await expect(page.getByLabel('Contraseña de acceso')).toBeVisible();
  expect((await api.get('/api/risks')).status()).toBe(401);
