@@ -1,0 +1,67 @@
+"""Genera el informe de entrega a partir del caso y las evidencias verificadas."""
+import sys
+from pathlib import Path
+sys.path.insert(0,str(Path('.packages').resolve()))
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_LEFT
+import pymupdf
+
+out=Path('output/pdf');out.mkdir(parents=True,exist_ok=True)
+styles=getSampleStyleSheet()
+styles.add(ParagraphStyle(name='TitleCustom',fontName='Helvetica',fontSize=30,leading=34,textColor=colors.HexColor('#173d38'),spaceAfter=20))
+styles.add(ParagraphStyle(name='HeadingCustom',fontName='Helvetica-Bold',fontSize=15,leading=20,textColor=colors.HexColor('#173d38'),spaceBefore=16,spaceAfter=9))
+styles['BodyText'].fontSize=10;styles['BodyText'].leading=15;styles['BodyText'].spaceAfter=10
+styles['BodyText'].textColor=colors.HexColor('#354b43')
+story=[]
+def p(t):story.append(Paragraph(t,styles['BodyText']))
+def h(t):story.append(Paragraph(t,styles['HeadingCustom']))
+def title(t):story.append(Paragraph(t,styles['TitleCustom']))
+def foot(c,d):
+ c.setStrokeColor(colors.HexColor('#d9e0d7'));c.line(46,43,549,43)
+ c.setFont('Helvetica',8);c.setFillColor(colors.HexColor('#64716b'));c.drawString(46,29,'ACADEMIA HORIZONTE / LABORATORIO 02 / 22 OCT 2026');c.drawRightString(549,29,str(d.page))
+title('Laboratorio de<br/>gestión de riesgos')
+p('<b>Academia Horizonte</b> · Informe de trabajo académico · Datos ficticios')
+h('Objetivo y alcance')
+p('Una campaña de matrícula de siete días necesita completar las solicitudes dentro del plazo y conservar los registros confirmados para poder recuperarlos. Se analizan la plataforma web, la base de datos y las copias de seguridad.')
+p('Condiciones conocidas del caso: una única instancia de base de datos, restauración de copias sin probar y cuenta de aplicación con permisos administrativos. Son condiciones ficticias y no describen la configuración real del proyecto entregado.')
+h('Decisión para dirección')
+p('<b>Priorizar las copias separadas y una restauración completa probada antes de la campaña.</b> Esta medida permite demostrar que se conservan las matrículas y medir cuándo podría volver el servicio. Los criterios propuestos son RPO de 1 hora y RTO de 4 horas; dirección debe aprobarlos. La reducción de privilegios sigue siendo necesaria y se propone en segundo lugar.')
+h('Evaluación común')
+p('Puntuación = probabilidad × impacto, en escalas de 1 a 3. Bajo: 1-2; medio: 3-4; alto: 6-9. Estas reglas pertenecen al laboratorio, no al ENS ni a NIST. La incertidumbre se declara como supuesto y no implica probabilidad alta.')
+table=Table([['Riesgo','P','I','Resultado','Prioridad'],['Recuperación no probada','2','3','6 / Alto','1'],['Privilegios excesivos','2','3','6 / Alto','2']],colWidths=[221,36,36,95,115])
+table.setStyle(TableStyle([('BACKGROUND',(0,0),(-1,0),colors.HexColor('#173d38')),('TEXTCOLOR',(0,0),(-1,0),colors.white),('FONTNAME',(0,0),(-1,0),'Helvetica-Bold'),('FONTNAME',(0,1),(-1,-1),'Helvetica'),('FONTSIZE',(0,0),(-1,-1),9),('BOTTOMPADDING',(0,0),(-1,-1),10),('TOPPADDING',(0,0),(-1,-1),10),('BACKGROUND',(0,1),(-1,-1),colors.HexColor('#e9efdf'))]))
+story.append(table)
+h('Estado de la entrega')
+p('Proyecto Next.js y TypeScript preparado con formulario guiado, evaluación, medidas, acceso protegido y persistencia. La documentación distingue las pruebas locales de las evidencias externas pendientes. <b>Preview publicada; registro remoto pendiente:</b> falta configurar Supabase y las variables de acceso. El repositorio remoto y el acceso del profesor siguen pendientes.')
+story.append(PageBreak())
+title('Dos riesgos completos')
+h('01 / Pérdida de registros confirmados')
+p('Debido a que no se ha probado la restauración de las copias, un fallo del almacenamiento podría provocar pérdida de acceso a los registros confirmados de la base de datos, causando imposibilidad de reconstruir matrículas y afectando al objetivo de conservar y recuperar registros.')
+p('<b>Probabilidad 2:</b> fallo plausible, sin indicios concretos de que ocurrirá durante la campaña. La ausencia de pruebas no demuestra alta frecuencia. <b>Impacto 3:</b> si las copias no permiten recuperar los registros, la pérdida sería definitiva. <b>Nivel: 6, alto.</b>')
+p('<b>Supuesto:</b> se desconoce si las copias disponibles recuperan todos los registros. <b>Medida:</b> copias horarias cifradas en almacenamiento separado y restauración completa aislada antes de la campaña. <b>Responsable:</b> sistemas. <b>Prioridad:</b> 1, inmediata.')
+p('<b>Verificación:</b> simular pérdida de instancia, restaurar, comparar recuentos e integridad y comprobar matrículas completas. Medir RPO y RTO contra los criterios aprobados. <b>Estado:</b> propuesta; no existe evidencia de implantación. No se reduce la valoración automáticamente.')
+h('02 / Alteración por privilegios excesivos')
+p('Debido a los permisos administrativos de la cuenta de aplicación, su uso indebido tras un posible compromiso podría provocar borrado o alteración de tablas de la base de datos, causando interrupción y reconstrucción de matrículas, y dificultando completar solicitudes dentro del plazo.')
+p('<b>Probabilidad 2:</b> escenario plausible por los permisos, sin indicios de intrusión. <b>Impacto 3:</b> la reconstrucción podría superar los siete días y comprometer el plazo. <b>Nivel: 6, alto.</b>')
+p('<b>Supuestos:</b> posible compromiso de la cuenta y tiempo de recuperación no medido. <b>Medida:</b> rol exclusivo con CRUD solo en tablas autorizadas, separar migraciones, revocar privilegios de esquema y rotar la credencial anterior. <b>Responsable:</b> administración de BD. <b>Prioridad:</b> 2, antes de campaña.')
+p('<b>Verificación:</b> probar CRUD autorizado y confirmar denegación de CREATE, DROP y acceso a otras tablas con el rol real de ejecución. Repetir la prueba funcional tras rotar. <b>Estado:</b> propuesta; pendiente de prueba en PostgreSQL.')
+story.append(PageBreak())
+title('Implementación y evidencias')
+h('Cómo comprobar el trabajo')
+p('Consultar README.md. En Windows: npm.cmd ci; npm.cmd run setup:local; npm.cmd run dev. El comando inicial genera secretos en .env.development.local, muestra la contraseña solo en la terminal e incorpora los dos riesgos si la base está vacía. Guardar la credencial en Bitwarden. Abrir http://127.0.0.1:3000.')
+p('SQLite se usa únicamente en desarrollo. En Vercel se exige PostgreSQL: no se escriben registros en un sistema de archivos efímero. Las consultas están parametrizadas y las entradas se validan en el servidor con Zod. Los registros requieren sesión; las escrituras requieren además un origen autorizado.')
+h('Validación y trazabilidad')
+p('El resultado actualizado de las pruebas y sus límites se registra en docs/pruebas.md. El identificador del commit se obtiene con git rev-parse HEAD. La URL y el SHA efectivamente desplegados deben registrarse en docs/despliegue.md después de publicar. No se inventan evidencias remotas.')
+h('Seguridad y fuentes')
+p('La matriz SEG-01 a SEG-08 relaciona finalidad, referencia, implementación, prueba y evidencia en docs/requisitos-seguridad.md. Se consultaron el ENS, RD 311/2022, anexo II (op.acc.4, op.exp.2 y mp.sw.1), y NIST SP 800-53 Rev. 5, edición 2020 actualizada el 10/12/2020 (IA-5, AC-6 y SI-10). La ficha NIST advierte de Release 5.2.0; el trabajo conserva la edición solicitada.')
+p('Fuentes: boe.es/buscar/act.php?id=BOE-A-2022-7191; csrc.nist.gov/pubs/sp/800/53/r5/upd1/final. Enlaces completos y condiciones de reutilización en docs/fuentes.md, consultados el 22/10/2026. Se redactan resúmenes propios, sin redistribuir las normas. Esta adaptación didáctica no acredita conformidad completa.')
+h('Decisión de IA revisada')
+p('Se descartó asignar probabilidad alta por el mero hecho de que las copias no estuvieran probadas. Se fijó P=2 y se declaró la incertidumbre. Es una revisión del propio asistente, documentada en docs/decision-ia.md; queda pendiente la revisión personal del alumno.')
+h('Para completar la entrega externa')
+p('La Preview está en laboratorio2-riesgos-preview-spamtom4444.vercel.app, protegida por Vercel. Configurar Supabase y variables separadas por entorno y redesplegar con --environment preview. Crear repositorio privado GitHub, subir el commit y conceder acceso al profesor. Registrar URL Preview, SHA, fecha, pruebas remotas y capturas de configuración sin valores sensibles.')
+SimpleDocTemplate(str(out/'Informe_Laboratorio_2.pdf'),pagesize=(595.28,841.89),leftMargin=46,rightMargin=46,topMargin=48,bottomMargin=59,title='Laboratorio de gestión de riesgos - Academia Horizonte',author='Laboratorio académico').build(story,onFirstPage=foot,onLaterPages=foot)
+d=pymupdf.open(out/'Informe_Laboratorio_2.pdf')
+for i,page in enumerate(d):page.get_pixmap(matrix=pymupdf.Matrix(1.3,1.3)).save(f'tmp/pdfs/report-{i+1}.png')
+print(f'Informe generado y renderizado: {len(d)} páginas')

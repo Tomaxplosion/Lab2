@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+.vercel/
+.env*
+!.env.example
+.data/
+.packages/
+tmp/
+test-results/
+playwright-report/
+*.tsbuildinfo
+Laboratorio_2_Gestion_de_riesgos.pdf
+
+.vercel
+.env*
+!.env.example

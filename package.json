@@ -1,0 +1,15 @@
+{
+  "name": "laboratorio2-riesgos",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1",
+    "test": "node --experimental-strip-types --test tests/domain.test.ts",
+    "test:e2e": "playwright test",
+    "setup:local": "node scripts/setup-local.mjs"
+  },
+  "dependencies": {"next": "^16.0.0", "react": "^19.0.0", "react-dom": "^19.0.0", "pg": "^8.16.0", "zod": "^4.0.0", "server-only": "^0.0.1"},
+  "devDependencies": {"typescript": "^5.9.0", "@types/node": "^24.0.0", "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0", "@types/pg": "^8.15.0", "@playwright/test": "^1.56.0"}
+}

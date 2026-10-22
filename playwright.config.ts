@@ -1,0 +1,6 @@
+import { defineConfig } from '@playwright/test';
+import { randomBytes,scryptSync } from 'node:crypto';
+const password=process.env.TEST_PASSWORD??randomBytes(24).toString('hex'),salt=randomBytes(16).toString('hex');
+process.env.TEST_PASSWORD=password;
+process.env.LOCAL_DATA_DIR=`tmp/test-db-${randomBytes(8).toString('hex')}`;
+export default defineConfig({testDir:'./tests/e2e',workers:1,use:{baseURL:'http://127.0.0.1:3100',headless:true},webServer:{command:'npm.cmd run dev -- --port 3100',url:'http://127.0.0.1:3100',reuseExistingServer:false,env:{APP_ENV:'development',APP_ORIGIN:'http://127.0.0.1:3100',SESSION_SECRET:randomBytes(48).toString('hex'),APP_PASSWORD_HASH:`${salt}:${scryptSync(password,salt,64).toString('hex')}`}},reporter:'list'});
