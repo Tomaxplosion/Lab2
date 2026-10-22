@@ -27,3 +27,5 @@ Comprobar escritura/lectura desde la aplicación, recarga y acceso no autorizado
 ## Bloqueo actual
 
 No hay conector Supabase ni navegador conectado en esta sesión (inventario vacío). No se ha accedido a tu proyecto Supabase, creado roles, ejecutado el esquema ni configurado DATABASE_URL. Estas acciones deben completarse en el panel o en una sesión conectada. El código está preparado; no se afirma que la base remota esté configurada.
+
+Actualización parte 2: el usuario confirmó roles.sql y 002-riesgos.sql ejecutados sin errores. El bloqueo actual es la autorización de despliegue de Vercel, no una afirmación de fallo en esas migraciones. Ver despliegue.md.

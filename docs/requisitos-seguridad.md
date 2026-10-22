@@ -1,20 +1,25 @@
-# Requisitos de seguridad y aceptación
+# Requisitos de seguridad - estado final
 
-Estado inicial de todos: **pendiente**. Estado actual diferenciado por entorno en docs/pruebas.md. Referencias verificadas y versiones en [fuentes](fuentes.md). Las asociaciones expresan apoyo conceptual; no equivalencia ni conformidad completa.
+Fecha: 22/10/2026. Versión técnica: 061330d. Adaptación didáctica de ENS RD 311/2022 y NIST SP 800-53 Rev. 5; no acredita conformidad completa. Referencias y condiciones en fuentes.md. Estado: cumplido, parcial o pendiente según evidencia, sin atribuir resultados no ejecutados.
 
-| ID | Finalidad y referencia | Implementación | Prueba de aceptación | Evidencia esperada |
-|---|---|---|---|---|
-| SEG-01 | Evitar exposición. IA-5, apoyo a custodia de autenticadores; exclusión de Git es requisito del laboratorio | .gitignore, .env.example vacía, configuración generada localmente | Inspeccionar archivos versionados e historial; ningún secreto real | Lista de archivos y revisión del historial |
-| SEG-02 | Mantener secretos en servidor. IA-5, relación parcial | módulos server-only; sin NEXT_PUBLIC_ para secretos; respuestas genéricas | Buscar marcadores secretos en JS de navegador, HTML y errores | Resultado de búsqueda sin coincidencias |
-| SEG-03 | Solo acceso autorizado. ENS op.acc.4.1 | sesión HMAC expirable, cookie HttpOnly/Secure/SameSite, control en GET/POST/PUT, comprobación Origin | Leer/escribir sin sesión → 401; origen ajeno → 403 | Prueba HTTP y navegador |
-| SEG-04 | Mínimo privilegio. ENS op.acc.4.2, NIST AC-6 | rol de aplicación separado de propietario; SQL en db/schema.sql | CRUD permitido y DDL/acceso ajeno denegado con rol real | Capturas sin secretos de permisos y consultas; pendiente PostgreSQL |
-| SEG-05 | Validar datos. NIST SI-10; ENS mp.sw.1, apoyo al desarrollo seguro | Zod estricto en servidor: tipos, límites, enumeraciones, evidencia requerida para verificar; SQL parametrizado | P=4, tipo incorrecto, texto largo, campos extra y JSON inválido rechazados | Unitarias y pruebas API |
-| SEG-06 | Aislar entornos. ENS mp.sw.1, separación de desarrollo; detalle de Preview es propio | SQLite solo development; en Vercel exigir PostgreSQL; cuentas/BD y secretos distintos por entorno | Comparar configuración saneada y comprobar aislamiento entre dos BD | Configuración sin valores, pendiente servicios externos |
-| SEG-07 | No revelar detalles internos. Requisito del laboratorio; op.exp.2 apoya configuración segura | errores genéricos sin stack ni credenciales; no imprimir cuerpos o variables | Solicitud inválida y BD no disponible devuelven errores públicos seguros | Respuestas HTTP saneadas |
-| SEG-08 | Entrega trazable. Requisito del laboratorio | commits, lockfile, registro de pruebas y despliegue | Comparar commit con despliegue Preview y abrir URL | SHA, URL, fecha y resultado; pendiente Vercel |
+| ID | Estado | Implementación y referencia | Prueba y evidencia |
+|---|---|---|---|
+| SEG-01 | Parcial | Exclusiones de archivos sensibles; custodia en Bitwarden. IA-5 apoya gestión de autenticadores; Git es requisito propio | Escáner de todo el historial: sin patrones encontrados. Hubo exposición en chat/captura y queda rotación personal pendiente; incidencias.md |
+| SEG-02 | Cumplido | pg y módulos server-only; nunca NEXT_PUBLIC para secretos. IA-5, relación parcial | Chromium comprueba HTML y JS contra contraseña efímera y cadenas PostgreSQL; sin coincidencias. No equivale a auditoría exhaustiva |
+| SEG-03 | Parcial | Perfil gestor, scrypt, sesión HMAC 4 h, HttpOnly/Secure en HTTPS/SameSite Strict, autorización GET/POST/PUT/DELETE y Origin exacto. ENS op.acc.4.1 | Pruebas locales sin sesión: 401 y BD idéntica. Origen ajeno: 403. Pruebas remotas en pruebas.md |
+| SEG-04 | Parcial | Rol app CRUD, migrator propietario separado, RLS limitado a app. ENS op.acc.4.2 y AC-6 | Usuario confirma SQL ejecutado. CRUD remoto preparado pero no ejecutado por bloqueo; falta prueba de denegación DDL y auditoría de membresías con la cuenta real |
+| SEG-05 | Cumplido | Zod estricto de servidor, límites, enumeraciones, tipos, UUID y evidencia. NIST SI-10 y apoyo ENS mp.sw.1 | Vacío, texto largo, valor ajeno, P=4, score inyectado y JSON malformado rechazados; unitarias/API |
+| SEG-06 | Parcial | PostgreSQL en desarrollo y Preview; SQLite solo pruebas aisladas. DATABASE_URL_ADMIN solo local. ENS mp.sw.1 como apoyo | Secretos efímeros de prueba distintos, SESSION_SECRET Preview rotado. Falta configurar y verificar BD PostgreSQL de desarrollo distinta de Preview |
+| SEG-07 | Cumplido | Errores públicos genéricos con referencia; diagnóstico interno solo operation, code, reference, fecha. Requisito del laboratorio, apoyo op.exp.2 | Entradas inválidas sin SQL, rutas, stacks ni credenciales; logger por lista blanca, no serializa excepciones |
+| SEG-08 | Parcial | Commits por etapas, lockfile, Preview y etiqueta entrega-l2. Requisito del laboratorio | Versiones y pruebas documentadas; faltan aportaciones personales identificadas, URL repositorio confirmada y acceso profesor |
 
-## Límites explícitos
+## Explicación de decisiones
 
-Autenticación de grupo, sin identidad individual ni MFA. Límite global de 30 intentos por 15 minutos, persistente en BD para soportar varias instancias; puede bloquear temporalmente el acceso legítimo si un tercero agota el cupo. Las sesiones duran cuatro horas: cerrar sesión borra la cookie del navegador; rotar SESSION_SECRET invalida todas las sesiones. La CSP permite scripts inline por compatibilidad con Next; no se presenta como endurecimiento completo. Los textos se escapan con React.
+Se requieren GRANT y políticas RLS: conceder privilegios a una tabla no autoriza automáticamente sus filas. Se concede acceso solo al rol del servidor. La contraseña no se almacena en claro: scrypt con sal; el secreto HMAC es distinto. El servidor valida y calcula la puntuación aunque el navegador sea modificado. Una medida propuesta no reduce el riesgo. Los errores internos se identifican por referencia sin divulgar datos de conexión.
 
-Las pruebas locales no demuestran los permisos del proveedor ni la separación efectiva de datos de Vercel. No marcar SEG-04, SEG-06 o la parte desplegada de SEG-08 como cumplidos hasta adjuntar esas evidencias.
+Limitaciones: un único perfil compartido, sin identidad individual ni MFA. El límite global de 30 solicitudes de acceso por intervalo de 15 minutos también cuenta accesos correctos y puede bloquear temporalmente a un usuario legítimo. Cerrar sesión elimina la cookie local; rotar SESSION_SECRET invalida todas. La CSP conserva inline por Next y unsafe-eval exclusivamente en desarrollo.
+
+## Bloqueo final verificado
+
+La Preview de parte 2 está Blocked por permisos del autor Git (Vercel), no por un fallo de construcción. La URL estable conserva parte 1. Las pruebas remotas requeridas siguen pendientes. SEG-03 se considera **parcial en el despliegue** aunque su implementación y pruebas locales estén completas; SEG-08 permanece parcial. La rotación de SESSION_SECRET está guardada en Preview y surtirá efecto al lograr un despliegue nuevo Ready.
+

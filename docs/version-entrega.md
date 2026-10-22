@@ -1,14 +1,7 @@
 # Versión de entrega
 
-La aplicación se publica en el entorno Preview del proyecto laboratorio2-riesgos. Las modificaciones posteriores de este registro solo documentan la evidencia; no cambian el código publicado.
+Código técnico parte 2 probado localmente: 061330d3f8fc5cc6c5e7f115ac50ad190a3cc025. El último commit Prepara la entrega del laboratorio 2 incorpora el informe y las evidencias. La etiqueta entrega-l2 identifica ese commit final; obtener su SHA con git rev-parse entrega-l2.
 
-- Commit de código desplegado: `fec031c23398b80d8ba931585e81c80860a55972`.
-- URL inmutable: https://laboratorio2-riesgos-3aj19kzrf-spamtom4444-2887.vercel.app
-- Deployment: `dpl_EEuq6V3xtUwSjtpsM9VPNdfzeQ8N`.
-- Fecha de publicación: 22/10/2026, 12:00 (Europe/Madrid).
-- Verificación: CLI oficial 65.1.0, inspect indica target preview y Ready. La página descargada mediante vercel curl contiene título, descripción y aviso académico.
-- Protección: vercel_authentication activa; no se ha desactivado para dar acceso público.
+Nueva Preview: bloqueada por permisos Vercel del autor. El alias estable conserva parte 1. Ver docs/despliegue.md para URL de intento, causa y pasos pendientes.
 
-Alias: https://laboratorio2-riesgos-preview-spamtom4444.vercel.app
-
-Pendientes externos: configurar Supabase y secretos de Preview, crear repositorio privado GitHub, conceder acceso al profesor y repetir pruebas remotas. No hay registro remoto funcional hasta completar la configuración.
+Antes de entregar: aportaciones y revisión personal de los tres integrantes, quién realiza la entrega, rotación de credenciales expuestas, BD PostgreSQL de desarrollo separada, autorización Vercel, pruebas remotas y verificación del acceso del profesor.

@@ -13,3 +13,8 @@ Los GRANT estaban presentes, pero RLS impedía insertar el contador de intentos 
 ## INC-03 / Origen distinto / 22-10-2026
 
 Se intentó iniciar sesión desde una URL inmutable diferente del alias autorizado. Se conserva APP_ORIGIN exacto y se facilita el alias estable; no se añadieron comodines ni se eliminó la comprobación.
+
+## INC-04 / Despliegue bloqueado por permisos / 22-10-2026
+
+La nueva Preview de parte 2 fue rechazada por Vercel porque el autor del commit no tiene permiso en el proyecto. Se mantuvo la Preview anterior y no se modificó la identidad de commits ni se eliminaron controles para eludir el bloqueo. El titular indicó que no puede resolverlo ahora. Pendiente: vincular cuenta GitHub autorizada, verificar acceso al proyecto, redesplegar Preview, actualizar alias y ejecutar pruebas remotas. La rotación de SESSION_SECRET queda guardada, pendiente de aplicarse en el despliegue.
+

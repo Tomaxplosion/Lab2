@@ -11,6 +11,7 @@ test-results/
 playwright-report/
 *.tsbuildinfo
 Laboratorio_2_Gestion_de_riesgos.pdf
+output/Entrega_PDU.txt
 
 .vercel
 .env*

@@ -9,3 +9,8 @@ Además: P e I enteros 1–3; justificaciones 3–700; medida y prueba 3–1000;
 «Cargar ejemplo» reproduce el escenario de almacenamiento del enunciado; «Cargar segundo riesgo» prepara privilegios excesivos. «Limpiar formulario» descarta el borrador, sin borrar registros. El borrador vive en memoria y desaparece al recargar. Guardar requiere acceso al servidor, valida de nuevo y persiste en BD. Editar un registro solo lo cambia al guardar.
 
 Todos los controles tienen etiquetas y límites. React presenta los textos como texto plano; no se usa HTML del usuario. La validación del navegador por sí sola no satisface SEG-05: se implementa también en app/api/risks/route.ts y lib/domain.ts. Las pruebas cubren vacíos, ejemplo, edición, limpieza, tipos y valores inválidos.
+
+## Actualización parte 2
+
+Se añade expectedEffect obligatorio (3-1000 caracteres), estados Propuesta/Implantada/Verificada y fecha de modificación. Se sustituye el aviso de borrador temporal por una explicación del guardado persistente. El formulario sin guardar conserva solo cambios locales, mientras que el listado recupera registros del servidor. Ningún cálculo de puntuación se realiza en el navegador.
+

@@ -15,3 +15,5 @@ No introducir credenciales en el chat, Git, capturas o documentos. Bitwarden cus
 Para Vercel se necesitan bases de datos separadas para desarrollo, Preview y producción, no solo nombres distintos de variable. Usar el modo TLS con verificación de certificado recomendado por el proveedor; no desactivar rejectUnauthorized. No reutilizar el usuario propietario del esquema.
 
 Si hay exposición, revocar o rotar de inmediato, invalidar sesiones, revisar accesos y eliminar el secreto del historial según el procedimiento del repositorio. Borrar únicamente el último archivo no revoca el valor expuesto. No registrar cuerpos de login, cookies ni cadenas de conexión.
+
+La política vigente de entornos y rotación de la parte 2 se detalla en docs/gestion-secretos.md e incidencias.md; prevalece sobre las notas iniciales.

@@ -1,48 +1,35 @@
 # Laboratorio de gestión de riesgos
 
-Aplicación académica para identificar, evaluar y comunicar riesgos y priorizar medidas de protección. Caso ficticio: Academia Horizonte, campaña de matrícula de siete días. Next.js y TypeScript, compatible con Vercel, sin IA integrada.
+Aplicación académica para identificar, evaluar y comunicar riesgos de la Academia Horizonte. Next.js y TypeScript, PostgreSQL Supabase, sin IA integrada. Partes 1 y 2. Solo datos ficticios.
 
 ## Ejecutar en Windows
 
-Requisitos comprobados: Git 2.55.0, Node.js 24.21.0 y npm 11.19.0. Usar Node 24 por `node:sqlite`. PowerShell bloquea npm.ps1; los comandos usan npm.cmd sin cambiar la política del equipo.
+Node 24, Git y npm. PowerShell: usar npm.cmd si la política bloquea npm.ps1.
 
-```powershell
-npm.cmd ci
-npm.cmd run setup:local
-npm.cmd run dev
-```
+1. npm.cmd ci
+2. npm.cmd run setup:local (no sobrescribe configuración existente).
+3. Configurar personalmente DATABASE_URL en .env.development.local, con un proyecto PostgreSQL exclusivo de desarrollo. Generar secretos distintos de Preview y guardar la contraseña en Bitwarden.
+4. Aplicar el esquema y roles según docs/base-de-datos.md. npm.cmd run dev y abrir http://127.0.0.1:3000.
 
-Abrir http://127.0.0.1:3000. El comando de configuración genera .env.development.local y muestra la contraseña **solo en tu terminal**: guardarla en Bitwarden. No se ha generado una contraseña personal durante la preparación. No compartirla en el chat. Si ya existe .env.development.local, el script no la sobrescribe.
+La ruta normal exige PostgreSQL. SQLite queda restringido a pruebas automáticas. No se guardan registros solo en el navegador. Cargar los dos ejemplos del formulario, revisar sus supuestos y guardar. Los datos migrados sin efecto esperado específico requieren revisión.
 
-La configuración inicial incorpora los dos riesgos completos del caso si la base de datos está vacía. Al entrar, revisarlos en «Resumen para dirección», donde también se responde a la pregunta de cierre. «Identificar un riesgo» permite cargar los ejemplos, editarlos y guardarlos. En una BD nueva de Preview, revisar y guardar ambos ejemplos desde el formulario.
+## Pruebas y despliegue
 
-SQLite guarda los registros en .data/development.sqlite. Recargar o reiniciar conserva los datos. SQLite está prohibido en Vercel y fuera del entorno development; allí es obligatoria PostgreSQL. No se usa localStorage como protección o persistencia principal.
+npm.cmd test; npm.cmd run build; npm.cmd run test:e2e. Ver docs/pruebas.md. Para migrar desde local opcionalmente: node --env-file=.env.migrations.local scripts/migrate.mjs. DATABASE_URL_ADMIN nunca se configura en Vercel. El grupo ha elegido ejecutar las migraciones desde SQL Editor.
 
-## Comprobar
+Publicar únicamente con npx.cmd vercel deploy --environment preview; verificar target preview y Ready. Actualizar el alias estable con vercel alias set. Nunca usar --prod. Preview: https://laboratorio2-riesgos-preview-spamtom4444.vercel.app. Su protección Vercel sigue activa; iniciar sesión en Vercel no sustituye la contraseña del gestor.
 
-```powershell
-npm.cmd test
-npm.cmd run build
-$env:PLAYWRIGHT_BROWSERS_PATH="$PWD/tmp/browsers"
-npx.cmd playwright install chromium
-npm.cmd run test:e2e
-```
+## Documentación
 
-Las pruebas de navegador usan secretos efímeros, una BD aislada en tmp/ y el puerto 3100. No apuntar esa ejecución a producción. La prueba cubre accesos sin sesión, origen externo, entrada inválida, borrador, edición, limpieza, guardado, recarga y salida. Ver [resultados](docs/pruebas.md).
+- [Fuentes](docs/fuentes.md), [caso](docs/caso.md), [evaluación](docs/evaluacion-riesgos.md), [formulación](docs/formulacion-riesgo.md).
+- [Base de datos](docs/base-de-datos.md), [Supabase](docs/supabase.md), [gestión de secretos](docs/gestion-secretos.md), [notas de secretos parte 1](docs/secretos.md).
+- [Requisitos de seguridad](docs/requisitos-seguridad.md), [pruebas](docs/pruebas.md), [incidencias](docs/incidencias.md).
+- [Despliegue](docs/despliegue.md), [versión de entrega](docs/version-entrega.md), [registro del grupo](docs/registro-grupo.md), [decisión IA parte 1](docs/decision-ia.md), [texto para PDU](docs/entrega-pdu.md).
 
-## Documentación y entrega
+## Entrega
 
-- [Caso](docs/caso.md) y [escalas y evaluación](docs/evaluacion-riesgos.md).
-- [Fuentes oficiales](docs/fuentes.md) y [requisitos de seguridad](docs/requisitos-seguridad.md).
-- [Formulación guiada](docs/formulacion-riesgo.md) y [gestión de secretos](docs/secretos.md).
-- [Decisión de IA revisada](docs/decision-ia.md), [pruebas](docs/pruebas.md) y [despliegue](docs/despliegue.md).
+Fecha: viernes 30/10/2026, 23:59, tarea Entrega Laboratorio 2, una entrega por grupo. Entregar texto con integrantes, URL Preview, URL repositorio, SHA de entrega-l2 y quién entrega. Adjuntar output/pdf/Entrega_Laboratorio_2.pdf (requisitos, pruebas y registro del grupo).
 
-## GitHub privado y Vercel Preview
+El repositorio debe ser privado y accesible al profesor. Cada integrante debe aportar sus commits y revisión propia; no se fabrican autores. Pendientes concretos en docs/registro-grupo.md e incidencias.md. La etiqueta identifica la revisión técnica preparada; no acredita las acciones personales pendientes. Vaultwarden es opcional y no se añade para evitar desplazar requisitos obligatorios.
 
-Crear un repositorio **privado** vacío desde GitHub, añadir su URL con `git remote add origin URL_DEL_REPOSITORIO` y subir la rama con `git push -u origin HEAD`. Invitar al profesor desde Settings / Collaborators. No se ha enviado ninguna invitación ni subido el proyecto a una cuenta.
-
-Preview: https://laboratorio2-riesgos-preview-spamtom4444.vercel.app. La página está publicada; el registro remoto requiere configurar **Supabase** y las variables de acceso. Ver [Supabase](docs/supabase.md) y [despliegue](docs/despliegue.md). Vercel puede pedir acceso a la cuenta por su protección de Preview. No ejecutar `--prod`.
-
-Adaptación didáctica, sin declaración de conformidad completa con ENS o NIST. La cuenta compartida del laboratorio protege el acceso, pero no ofrece atribución individual ni MFA.
-
-https://laboratorio2-riesgos-preview-spamtom4444.vercel.app
+Estado de publicación de la parte 2: Vercel ha bloqueado la nueva Preview por permisos del autor Git. El enlace estable aún sirve parte 1; no contiene estos cambios hasta resolverlo. Consultar docs/despliegue.md.

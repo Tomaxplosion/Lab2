@@ -33,3 +33,8 @@ Medida prioritaria 2: cuenta exclusiva con CRUD sobre tablas autorizadas, migrac
 Si solo puede aprobarse una medida, priorizar la restauración probada y las copias separadas: permite demostrar que los registros se conservan y que el servicio puede volver antes de comprometer el plazo. El mínimo privilegio sigue siendo necesario, pero no recupera por sí mismo registros perdidos por un fallo físico. La prioridad se revisará si aparecen indicios de compromiso activo.
 
 Una medida propuesta o implantada no reduce automáticamente la puntuación. Incluso después de verificarla, la reevaluación debe justificar nuevos valores; la aplicación conserva la evaluación inicial hasta una edición explícita.
+
+## Actualización parte 2
+
+La clasificación se calcula exclusivamente en lib/scoring.ts desde el servidor. El cliente recibe score y level en el listado y consulta /api/evaluation para la vista previa. Medida: descripción, prioridad, efecto esperado, comprobación y estado Propuesta, Implantada o Verificada. Las nueve combinaciones están en docs/pruebas.md.
+

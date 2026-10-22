@@ -18,3 +18,8 @@ Preview tiene variables de servidor en Vercel. SESSION_SECRET se ha rotado duran
 La BD PostgreSQL de desarrollo distinta de Preview está pendiente de configurar por el grupo. No se consultan secretos existentes para comparar sus valores. El grupo debe confirmar separación de cuentas, proyectos y contraseña de acceso. No se usa Neon y no existen ramas Neon de Preview que documentar. No se ha publicado en producción.
 
 El secreto de sesión publicado en la captura ha sido sustituido. Siguen pendientes de rotación personal la contraseña de la BD y la de la web expuestas previamente; consultar docs/incidencias.md. No basta con borrar el mensaje o el archivo.
+
+## Estado efectivo al cierre
+
+Vercel ha guardado el nuevo secreto de sesión, pero ha bloqueado el redespliegue por permisos del autor. Por tanto, la invalidación de sesiones en la aplicación publicada está pendiente de que una nueva Preview alcance Ready. No se afirma revocación efectiva hasta entonces.
+
