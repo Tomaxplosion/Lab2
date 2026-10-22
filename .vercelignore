@@ -5,6 +5,9 @@
 .packages
 tmp
 node_modules
+.next
+out
+output
 test-results
 playwright-report
 *.pdf
