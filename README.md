@@ -44,3 +44,5 @@ Crear un repositorio **privado** vacío desde GitHub, añadir su URL con `git re
 Preview: https://laboratorio2-riesgos-preview-spamtom4444.vercel.app. La página está publicada; el registro remoto requiere configurar **Supabase** y las variables de acceso. Ver [Supabase](docs/supabase.md) y [despliegue](docs/despliegue.md). Vercel puede pedir acceso a la cuenta por su protección de Preview. No ejecutar `--prod`.
 
 Adaptación didáctica, sin declaración de conformidad completa con ENS o NIST. La cuenta compartida del laboratorio protege el acceso, pero no ofrece atribución individual ni MFA.
+
+https://laboratorio2-riesgos-preview-spamtom4444.vercel.app

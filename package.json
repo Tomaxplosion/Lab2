@@ -10,6 +10,22 @@
     "test:e2e": "playwright test",
     "setup:local": "node scripts/setup-local.mjs"
   },
-  "dependencies": {"next": "^16.0.0", "react": "^19.0.0", "react-dom": "^19.0.0", "pg": "^8.16.0", "zod": "^4.0.0", "server-only": "^0.0.1"},
-  "devDependencies": {"typescript": "^5.9.0", "@types/node": "^24.0.0", "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0", "@types/pg": "^8.15.0", "@playwright/test": "^1.56.0"}
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
+    "next": "^16.0.0",
+    "pg": "^8.16.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@types/node": "^24.0.0",
+    "@types/pg": "^8.15.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.9.0"
+  }
 }

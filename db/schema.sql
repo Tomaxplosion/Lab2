@@ -7,5 +7,11 @@ CREATE TABLE lab_riesgos.login_limits (bucket text PRIMARY KEY, attempts integer
 -- No escribir contraseñas en este script ni usar el propietario como cuenta de aplicación.
 GRANT USAGE ON SCHEMA lab_riesgos TO laboratorio_app;
 GRANT SELECT, INSERT, UPDATE, DELETE ON lab_riesgos.risks, lab_riesgos.login_limits TO laboratorio_app;
+ALTER TABLE lab_riesgos.risks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE lab_riesgos.login_limits ENABLE ROW LEVEL SECURITY;
+CREATE POLICY laboratorio_app_access ON lab_riesgos.risks
+  FOR ALL TO laboratorio_app USING (true) WITH CHECK (true);
+CREATE POLICY laboratorio_app_access ON lab_riesgos.login_limits
+  FOR ALL TO laboratorio_app USING (true) WITH CHECK (true);
 -- No añadir lab_riesgos a los esquemas expuestos de la Data API de Supabase.
 -- La cuenta NO debe tener SUPERUSER, CREATEDB, CREATEROLE ni pertenecer al rol propietario.
