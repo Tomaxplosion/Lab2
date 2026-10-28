@@ -18,6 +18,7 @@ La ruta normal exige PostgreSQL. SQLite queda restringido a pruebas automáticas
 npm.cmd test; npm.cmd run build; npm.cmd run test:e2e. Ver docs/pruebas.md. Para migrar desde local opcionalmente: node --env-file=.env.migrations.local scripts/migrate.mjs. DATABASE_URL_ADMIN nunca se configura en Vercel. El grupo ha elegido ejecutar las migraciones desde SQL Editor.
 
 Publicar únicamente con npx.cmd vercel deploy --environment preview; verificar target preview y Ready. Actualizar el alias estable con vercel alias set. Nunca usar --prod. Preview: https://laboratorio2-riesgos-preview-spamtom4444.vercel.app. Su protección Vercel sigue activa; iniciar sesión en Vercel no sustituye la contraseña del gestor.
+URL compartible: https://laboratorio2-riesgos-preview-spamtom4444.vercel.app/?_vercel_share=i34Fl319Dpn2xo6aeuvUe0x6mNFeDxF2
 
 ## Documentación
 
